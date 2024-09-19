@@ -1,4 +1,4 @@
-const database = require("../database/database");
+const database = require('../database/database');
 
 exports.getAreas = async (req, res) => {
   const googleId = req.params.googleId;
@@ -6,11 +6,11 @@ exports.getAreas = async (req, res) => {
 
   try {
     const result = await database.query(
-      "SELECT * FROM areas WHERE googleId = $1 ORDER BY createdAt DESC",
+      'SELECT * FROM areas WHERE googleId = $1 ORDER BY createdAt DESC',
       [googleId]
     );
     return res.status(200).json(result.rows);
   } catch (error) {
-    return res.status(500).json({ msg: "Get Items Fail" + error });
+    return res.status(500).json({ msg: 'Get Items Fail' + error });
   }
 };
