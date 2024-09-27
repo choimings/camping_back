@@ -14,6 +14,35 @@ app.get('/', (req, res) => {
   res.send('Hello');
 });
 
+app.post('/chat', (req, res) => {
+  const sendedQuestion = req.body.question;
+
+  const scriptPath = path.join(__dirname, 'bizchat.py');
+  const pythonPath = path.join(__dirname, 'venv', 'bin', 'python3');
+
+  // Spawn the Python process with the correct argument
+  const result = spawn(pythonPath, [scriptPath, sendedQuestion]);
+
+  output = '';
+
+  //파이썬 파일 수행 결과를 받아온다.
+  result.stdout.on('data', function (data) {
+    output += data.toString();
+  });
+
+  result.on('close', (code) => {
+    if (code == 0) {
+      res.status(200).json({ answer: output });
+    } else {
+      res.status(500).send('Something went wrong');
+    }
+  });
+
+  result.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+  });
+});
+
 app.use(require('./routes/getRoutes'));
 app.use(require('./routes/postRoutes'));
 app.use(require('./routes/deleteRoutes'));
